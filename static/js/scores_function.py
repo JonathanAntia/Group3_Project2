@@ -8,8 +8,8 @@ w_SQ_FT = dictionaryOfUserInput[sqft]
 w_flood = dictionaryOfUserInput[Flood]
 w_change = dictionaryOfUserInput[change]
 
-# call Adriana's function to query the database and create a dataframe
-df = Adrianasbudgetfuction(budget)
+# call SQL_Pull function to query the database and create a dataframe
+df = SQL_Pull(budget)
 
 # Calculate scores for each address.
 total_weights=w_sales+w_crime+w_schools+w_acreage+w_SQ_FT+w_flood+w_change
