@@ -1,7 +1,7 @@
 def scores (dictionaryOfUserInput):
 budget = dictionaryOfUserInput[budget]
-W_sales = dictionaryOfUserInput[sales]
-W_crime = dictionaryOfUserInput[crime]
+w_sales = dictionaryOfUserInput[sales]
+w_crime = dictionaryOfUserInput[crime]
 w_schools = dictionaryOfUserInput[schools]
 w_acreage = dictionaryOfUserInput[acreage]
 w_SQ_FT = dictionaryOfUserInput[sqft]
