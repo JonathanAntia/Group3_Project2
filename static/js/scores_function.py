@@ -11,6 +11,31 @@ w_change = dictionaryOfUserInput[change]
 # call SQL_Pull function to query the database and create a dataframe
 df = SQL_Pull(budget)
 
+# Normalize data for each parameter
+max=df['Offense_Count'].max()
+min=df['Offense_Count'].min()
+df["Crime Index"]=(df['Offense_Count']-min)/(max-min)*100
+
+max=df['school_rating'].max()
+min=df['school_rating'].min()
+df["School Rating Index"]=(df['school_rating']-min)/(max-min)*100
+
+max=df['acreage'].max()
+min=df['acreage'].min()
+df["Acreage Index"]=(df['acreage']-min)/(max-min)*100
+
+max=df['sq_ft'].max()
+min=df['sq_ft'].min()
+df["SQ_FT Index"]=(df['sq_ft']-min)/(max-min)*100
+
+max=df['flood_risk'].max()
+min=df['flood_risk'].min()
+df["Flood Risk Index"]=(df['flood_risk']-min)/(max-min)*100
+
+
+max=df['pct_value_change'].max()
+df['Valuation Index']=df['pct_value_change']/max*100
+
 # Calculate scores for each address.
 total_weights=w_sales+w_crime+w_schools+w_acreage+w_SQ_FT+w_flood+w_change
 
@@ -36,6 +61,11 @@ df["Score"]=round((w_sales*df['Sales Index']-
 max=df["Score"].max()
 min=df["Score"].min()
 max=df["Score"]=(df["Score"]-min)/(max-min)*100
+
+# look at only the parameters of interest
+parameter_and_score = homes_less_than_1M[["Sales Index",'Crime Index', 'School Rating Index',
+         'Acreage Index','SQ_FT Index', 'Flood Risk Index', 'Valuation Index','Score',
+         'TOTAL_APPRAISED_VALUE_2019','NEIGHBORHOOD']]
 
 # group parameters by neighborhood name
 neighborhood_group = parameter_and_score.groupby(["NEIGHBORHOOD"]).mean()
