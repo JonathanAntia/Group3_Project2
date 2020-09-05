@@ -59,36 +59,11 @@ d3.json('static/data/data.json').then((data)=>{
         accessToken: API_KEY
     }).addTo(myMap1);
     
-    // // Store API query variables
-    // const baseURL = "https://data.cityofnewyork.us/resource/fhrw-4uyv.json?";
-    // const date = "$where=created_date between'2016-01-01T00:00:00' and '2017-01-01T00:00:00'";
-    // const complaint = "&complaint_type=Rodent";
-    // const limit = "&$limit=10000";
-    
-    // // Assemble API query URL
-    // const url = baseURL + date + complaint + limit;
-    
-    // // Grab the data with d3
-    // d3.json(url).then( function(response) {
-    
-        // Create a new marker cluster group
-        const markers = L.markerClusterGroup();
-    
-        // Loop through data
-        response.forEach(response => {
-    
-        // Check for location property
-        if (response.location) {
-    
-            // Add a new marker to the cluster group and bind a pop-up
-            markers.addLayer(L.marker([response.location.coordinates[1], response.location.coordinates[0]])
-            .bindPopup(response.descriptor));
-        }
-    
-        });
-    
-        // Add our marker cluster layer to the map
-        myMap1.addLayer(markers);
-    
-    });  
-// });
+    // add marker to each neighborhood and popup with info
+    data.forEach(item => {
+        L.marker([item.Latitude, item.Longitude])
+        .bindPopup("<h1>"+item.Neighborhood+"</h1>")
+        .addTo(myMap1);
+    })
+  
+});  
