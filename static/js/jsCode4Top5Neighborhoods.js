@@ -3,7 +3,7 @@
 
 
 d3.json('static/data/data.json').then((data)=>{
-
+    console.log('All Data:')
     console.log(data);
 
     // extract the data needed for the table
@@ -17,7 +17,7 @@ d3.json('static/data/data.json').then((data)=>{
     const valuation = data.map(entry=> entry.ValueChangeIndex);
 
     // create an object with table data
-    let tableData = neighborhood.map((item,i)=>({
+    const tableData = neighborhood.map((item,i)=>({
         neighborhood: item, 
         sales: sales[i],
         crime: crime[i],
@@ -31,8 +31,10 @@ d3.json('static/data/data.json').then((data)=>{
     // use d3 to select the table body
     const tbody = d3.select('tbody');
 
+    console.log('Neighborhood Data:')
     console.log(tableData);
 
+    // add data to the table
     const fullTable = tableData.forEach(neighborhood => {
         let row = tbody.append('tr');
         Object.values(neighborhood).forEach(info => {
@@ -42,7 +44,7 @@ d3.json('static/data/data.json').then((data)=>{
         
     });
 
-    // add a map showing average score for houston's top 5 neighborhoods
+    // add a map showing houston's top 5 neighborhoods
     // Creating map object
     const myMap1 = L.map("map_hou_top_5", {
         center: [29.76, -95.37],
@@ -66,4 +68,33 @@ d3.json('static/data/data.json').then((data)=>{
         .addTo(myMap1);
     })
   
+    // create a horizontal bar chart with average score per neighborhood
+    // define x and y
+    const coordinates = data.map(item => [item.TotalScore, item.Neighborhood]);
+    const sorted = coordinates.sort((a,z)=> a[0]- z[0]);
+    const x = sorted.map(item => item[0]);
+    const y = sorted.map(item => item[1]);
+
+    console.log(x);
+    console.log(y);
+
+    // create a trace object with x as the score and y as the neighborhood name
+    const trace = {
+        type: 'bar',
+        x: x,
+        y: y,
+        orientation: 'h'
+    }
+    // define layout
+    const layout = {
+        title: "Top 5 Neighborhoods",
+        yaxis: {
+            automargin: true,
+            rangemode: 'tozero'
+        },
+        xaxis: {
+            rangemode: 'tozero'
+        }
+    }
+    Plotly.newPlot('hbarPlotTopScores', [trace], layout);
 });  
