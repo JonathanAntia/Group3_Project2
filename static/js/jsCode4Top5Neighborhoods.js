@@ -69,20 +69,14 @@ d3.json('static/data/data.json').then((data)=>{
     })
   
     // create a horizontal bar chart with average score per neighborhood
-    // define x and y
     const coordinates = data.map(item => [item.TotalScore, item.Neighborhood]);
     const sorted = coordinates.sort((a,z)=> a[0]- z[0]);
-    const x = sorted.map(item => item[0]);
-    const y = sorted.map(item => item[1]);
-
-    console.log(x);
-    console.log(y);
 
     // create a trace object with x as the score and y as the neighborhood name
-    const trace = {
+    const NeighborhoodTrace = {
         type: 'bar',
-        x: x,
-        y: y,
+        x: sorted.map(item => item[0]),
+        y: sorted.map(item => item[1]),
         orientation: 'h'
     }
     // define layout
@@ -93,8 +87,55 @@ d3.json('static/data/data.json').then((data)=>{
             rangemode: 'tozero'
         },
         xaxis: {
+            rangemode: 'tozero',
+            title: 'Total Score'
+        }
+    }
+    Plotly.newPlot('hbarPlotTopScores', [NeighborhoodTrace], layout);
+
+    // create a bar chart to show each parameter per neighborhood
+    // filter tableData with Neighborhood selected by user
+    const userSelection = 'SchoolRating'
+    
+    function chooseParameter (parameter){
+        switch(parameter){
+            case "SaleIndex":
+                return data.map(item => item.SaleIndex);
+            case "CrimeIndex":
+                return data.map(item => item.CimeIndex);
+            case "SchoolRating":
+                return data.map(item => item.SchoolRating);
+            case "AcreageIndex":
+                return data.map(item => item.AcreageIndex);
+            case "SQFTIndex":
+                return data.map(item => item.SQFTIndex);
+            case "FloodIndex":
+                return data.map(item => item.FloodIndex);
+            default:
+                return data.map(item => item.ValueChangeIndex);
+        }
+    };
+
+    // create a trace object with x as the neighborhood and y as the userSelected parameter
+    const x = data.map(item => item.Neighborhood);
+    let y = chooseParameter(userSelection);
+
+    const ParameterTrace = {
+        type: 'bar',
+        x: data.map(item => item.Neighborhood),
+        y: chooseParameter(userSelection)
+    }
+    // define layout
+    const parameterLayout = {
+        title: "Top 5 Neighborhoods",
+        yaxis: {
+            automargin: true,
+            rangemode: 'tozero',
+            title: userSelection
+        },
+        xaxis: {
             rangemode: 'tozero'
         }
     }
-    Plotly.newPlot('hbarPlotTopScores', [trace], layout);
+    Plotly.newPlot('barPlotParameter', [ParameterTrace], parameterLayout);
 });  
