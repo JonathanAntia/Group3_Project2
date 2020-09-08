@@ -10,16 +10,16 @@ const tbody = d3.select('tbody');
 const button = d3.select('#filter-btn');
 
 // create an event handler for clicking the button or pressing the enter key
-button.on('click', runEnter);
+button.on('click', handleResultButtonSubmit);
 
 window.addEventListener('keyup', function (event){
     if (event.defaultPrevented){
         return;
     }
     if (event.keyCode === 13){
-        runEnter();
+        handleResultButtonSubmit();
     }
-})
+});
 
 function handleResultButtonSubmit(){
     // get the value property of the each input
@@ -61,8 +61,8 @@ function handleResultButtonSubmit(){
 // FUNCTION TO PROVIDE RESULTS BASED ON USER'S SELECTION
 //////////////////////////////////////////////////////////////////
 function top5NeighborhoodsContent(weightCriteriaProvided){
-    d3.json(`api_url/${weightCriteriaProvided}`).then((data)=>{
-        console.log('All Data:')
+    d3.json(`api_url/${weightCriteriaProvided}`).then((response)=>{
+        const data = response;
         console.log(data);
 
         /////////////////////////////////////////
