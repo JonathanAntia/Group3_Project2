@@ -27,7 +27,7 @@ function handleResultButtonSubmit(){
     const inputSalesWeight = d3.select('#salesWeight').property('value');
     const inputCrimeWeight = d3.select('#crimeWeight').property('value');
     const inputSchoolWeight = d3.select('#schoolWeight').property('value');
-    const inputAcreageWeight = d3.select('#accreageWeight').property('value');
+    const inputAcreageWeight = d3.select('#acreageWeight').property('value');
     const inputSQFTWeight = d3.select('#sqftWeight').property('value');
     const inputFloodWeight = d3.select('#floodWeight').property('value');
     const inputValueChangeWeight = d3.select('#changeValueWeight').property('value');
@@ -241,11 +241,9 @@ function top5NeighborhoodsContent(weightCriteriaProvided){
 //////////////////////////////////////////////////////////
 // UPDATE INTERACTIVE BAR CHART PER USER SELECTION
 //////////////////////////////////////////////////////////
-// create an event handler associated with the drop down menu
-// filter tableData with Neighborhood selected by user
 
 // Function to change bar chart parameters based on user selection    
-function chooseParameter (parameter){
+function chooseParameter (data, parameter){
     switch(parameter){
         case "SaleIndex":
             return data.map(item => item.SaleIndex);
@@ -266,18 +264,21 @@ function chooseParameter (parameter){
 
 // Event handler to update interactive bar chart based on user selection
 function handleBarChartSubmit(){
-    // prevent the page from refreshing
-    d3.event.preventDefault();
+    // use D3 to select the dropdown menu
+    const dropdownMenu = d3.select('#parameters');
 
-    // select the input value from the dropdown menu
-    const parameterSelected = d3.select("#parameterInput").node().value;
+    // Assign the value of the dropdown menu option to a variable
+    const parameter = dropdownMenu.property('value');
 
-    // build new bar chart with the user input
-    updateInteractiveBarChart(parameterSelected)
+    // build a plot with the new subject
+    updateInteractiveBarChart(parameter);
 }
 
-function updateInteractiveBarChart(parameterSelected){
-    d3.json('static/data/data.json').then((data)=>{
+function updateInteractiveBarChart(parameter){
+    d3.json('static/data/data.json').then((importedData)=>{
+
+        const data = importedData;
+
         // array of available parameters to chose from
         const parametersArr = [
             "SalesIndex",
@@ -292,15 +293,18 @@ function updateInteractiveBarChart(parameterSelected){
         // array of available neighborhoods
         const neighborhoodsArr = data.map(item => item.Neighborhood);
 
-        if(parameterSelected in parametersArr){
+        const parameterSelected = parameter;
+        console.log(parameterSelected);
+
+        if(parametersArr.includes(parameterSelected)){
         // create a trace object with x as the neighborhood and y as the userSelected parameter
         const x = data.map(item => item.Neighborhood);
-        let y = chooseParameter(parameterSelected);
+        let y = chooseParameter(data, parameterSelected);
 
         const ParameterTrace = {
             type: 'bar',
             x: data.map(item => item.Neighborhood),
-            y: chooseParameter(parameterSelected)
+            y: chooseParameter(data, parameterSelected)
         }
         // define layout
         const parameterLayout = {
@@ -314,9 +318,9 @@ function updateInteractiveBarChart(parameterSelected){
                 rangemode: 'tozero'
             }
         }
-            Plotly.newPlot('barPlotParameter', [ParameterTrace], parameterLayout);
+            Plotly.newPlot('barPlotParameter2', [ParameterTrace], parameterLayout);
         }
-        else if(parameterSelected in neighborhoodsArr){
+        else if(neighborhoodsArr.includes(parameterSelected)){
             // filter data by neighborhood selected
             const neighborhoodData = data.filter(item => item.Neighborhood == parameterSelected);
 
@@ -344,7 +348,7 @@ function updateInteractiveBarChart(parameterSelected){
                 }
             };
     
-            Plotly.newPlot('barPlotParameter', [neighborhoodTrace], neighborhoodLayout);
+            Plotly.newPlot('barPlotParameter2', [neighborhoodTrace], neighborhoodLayout);
         }
         else {
         // create a bar chart to show all parameter per neighborhood
@@ -409,7 +413,7 @@ function updateInteractiveBarChart(parameterSelected){
             }
         };
 
-        Plotly.newPlot('barPlotParameter', parametersTrace, groupLayout);
+        Plotly.newPlot('barPlotParameter2', parametersTrace, groupLayout);
         }
     });
 };
