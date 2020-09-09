@@ -48,7 +48,7 @@ d3.json(link).then( function(data) {
       return {
         color: "white",
         fillColor: chooseColor(feature.properties.ZIPCODE),
-        fillOpacity: chooseOpacity(feature.properties.ZIPCODE),
+        fillOpacity: 0.8,
         weight: 1.5
       };
     }, onEachFeature: function(feature, layer) {
@@ -218,35 +218,11 @@ function chooseColor(zipcode) {
   case 77054:
     return "darkblue";
   case 77027:
-    return "purple";
+    return "pink";
   case 77098:
     return "yellow";
   default:
-    return "white";
+    return "none";
   }
 }
 
-function chooseOpacity(zipcode) {
-  switch (zipcode) {
-  case 77002:
-    return 0.5;
-  case 77005:
-    return 0.5;
-  case 77006:
-    return 0.5;
-  case 77019:
-    return 0.5;
-  case 77025:
-    return 0.5;
-  case 77030:
-    return 0.5;
-  case 77054:
-    return 0.5;
-  case 77027:
-    return 0.5;
-  case 77098:
-    return 0.5;
-  default:
-    return 0.2;
-  }
-}
