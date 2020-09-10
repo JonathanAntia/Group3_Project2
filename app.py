@@ -11,17 +11,17 @@ from processInputs import scores
 from userInputs import default_inputs
 
 app= Flask(__name__)
-hello_dict = {"hello":"world2"}
+
+scores(default_inputs)
 
 @app.route("/jsondata")
 def jsondata():
-   scores(default_inputs)
-   return render_template("index.html", j="top5hoods.json")
+
+   return top5hoods.json
 
 
 @app.route('/')
 def hello():
-    return jsonify(hello_dict)
     return top5hoods.json
 
 
