@@ -2,14 +2,14 @@
 import pandas as pd
 
 def scores (dictionaryOfUserInput):
-    budget = dictionaryOfUserInput[budget]
-    w_sales = dictionaryOfUserInput[sales]
-    w_crime = dictionaryOfUserInput[crime]
-    w_schools = dictionaryOfUserInput[schools]
-    w_acreage = dictionaryOfUserInput[acreage]
-    w_SQ_FT = dictionaryOfUserInput[sqft]
-    w_flood = dictionaryOfUserInput[Flood]
-    w_change = dictionaryOfUserInput[change]
+    budget = dictionaryOfUserInput['budget']
+    w_sales = dictionaryOfUserInput['sales']
+    w_crime = dictionaryOfUserInput['crime']
+    w_schools = dictionaryOfUserInput['schools']
+    w_acreage = dictionaryOfUserInput['acreage']
+    w_SQ_FT = dictionaryOfUserInput['sqft']
+    w_flood = dictionaryOfUserInput['Flood']
+    w_change = dictionaryOfUserInput['change']
 
     # call SQL_Pull function to query the database and create a dataframe
     df = SQL_Pull(budget)
@@ -70,7 +70,7 @@ def scores (dictionaryOfUserInput):
     max=df["Score"]=(df["Score"]-min)/(max-min)*100
 
     # look at only the parameters of interest
-    parameter_and_score = homes_less_than_1M[["Sales Index",'Crime Index', 'School Rating Index',
+    parameter_and_score = df[["Sales Index",'Crime Index', 'School Rating Index',
             'Acreage Index','SQ_FT Index', 'Flood Risk Index', 'Valuation Index','Score',
             'TOTAL_APPRAISED_VALUE_2019','NEIGHBORHOOD']]
 
