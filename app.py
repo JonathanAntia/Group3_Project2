@@ -22,6 +22,7 @@ def jsondata():
 @app.route('/')
 def hello():
     return jsonify(hello_dict)
+    return top5hoods.json
 
 
 if __name__ =='__main__':
