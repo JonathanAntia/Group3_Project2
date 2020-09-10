@@ -205,7 +205,7 @@
             <div class="page-header" >
               <h1>Neighborhoods Currently Included</h1>  
               <div id="table">
-                {% for table in tables %}
+                {% for table in table %}
                   {{titles[loop.index]}}
                   {{ table|safe }}
                 {% endfor %}/div>
