@@ -17,12 +17,12 @@ scores(default_inputs)
 @app.route("/jsondata")
 def jsondata():
 
-   return top5hoods.json
+   return jsonify(top5hoods)
 
 
 @app.route('/')
 def hello():
-    return top5hoods.json
+    return jsonify(top5hoods)
 
 
 if __name__ =='__main__':
