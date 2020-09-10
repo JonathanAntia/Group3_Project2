@@ -1,3 +1,6 @@
+# Dependencies
+import pandas as pd
+
 def scores (dictionaryOfUserInput):
 budget = dictionaryOfUserInput[budget]
 w_sales = dictionaryOfUserInput[sales]
@@ -12,6 +15,10 @@ w_change = dictionaryOfUserInput[change]
 df = SQL_Pull(budget)
 
 # Normalize data for each parameter
+max=df['sales_neighborhood_2019'].max()
+min=df['sales_neighborhood_2019'].min()
+df["Sales Index"]=(df['sales_neighborhood_2019']-min)/(max-min)*100
+
 max=df['Offense_Count'].max()
 min=df['Offense_Count'].min()
 df["Crime Index"]=(df['Offense_Count']-min)/(max-min)*100
@@ -88,5 +95,5 @@ min=neighborhood_group_with_counts['Valuation Index']=(neighborhood_group_with_c
 # sort scores
 ranked_neighborhoods = neighborhood_group_with_counts.sort_values('Score',ascending=False)
 top5neighborhoods = ranked_neighborhoods.head()
-jsonified = top5neighborhoods.to_json()
-return jsonified
+
+return top5neighborhoods.to_json('top5neighborhoods.json')
