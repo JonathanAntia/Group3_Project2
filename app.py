@@ -7,26 +7,23 @@ import numpy as np
 import pandas as pd
 from flask import (Flask, render_template, jsonify, request, redirect)
 from flask_sqlalchemy import SQLAlchemy
-from processInputs import scores
+import processInputs 
 from userInputs import default_inputs
-import json
+import top5hoods
 
 app= Flask(__name__)
 
 
 
-@app.route("/jsondata")
-def jsondata():
+# @app.route("/jsondata")
+# def jsondata():
 
-   return jsonify(top5hoods)
+#    return jsonify(top5hoods)
 
 
 @app.route('/',  methods = ("POST", "GET"))
-def html_table():
-    scores(default_inputs)
-    json= "top5hoods.json"
-   return(json)
-
+def home():
+ return top5hoods
 
 if __name__ =='__main__':
     app.run(debug=True)
