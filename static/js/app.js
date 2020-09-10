@@ -1,11 +1,13 @@
-// $('#ex1').bootstrapSlider({});
-function showTable (){
-    const jsonfile= "top5hoods.json";
-    d3.json(jsonfile).then(
-        function(data){
-            console.log(data);
-        }
-    )
-};
+var budgetSlider = document.getElementById("budgetRange");
+var budgetOutput = document.getElementById("demo");
+output.innerHTML = budgetSlider.value; // Display the default slider value
 
-showTable();
+// Update the current slider value (each time you drag the slider handle)
+// budgetSlider.oninput = function() {
+//   output.innerHTML = this.value;
+// }
+
+('#my-range').on('change input', function() {
+    var $this = $(this);
+    $this.siblings('label').html('Current value (' + $this.val() + ')');
+});
