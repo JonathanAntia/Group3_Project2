@@ -9,10 +9,11 @@ from flask import (Flask, render_template, jsonify, request, redirect)
 from flask_sqlalchemy import SQLAlchemy
 from processInputs import scores
 from userInputs import default_inputs
+import json
 
 app= Flask(__name__)
 
-scores(default_inputs)
+
 
 @app.route("/jsondata")
 def jsondata():
@@ -20,9 +21,11 @@ def jsondata():
    return jsonify(top5hoods)
 
 
-@app.route('/')
-def hello():
-    return jsonify(top5hoods)
+@app.route('/',  methods = ("POST", "GET"))
+def html_table():
+    scores(default_inputs)
+    json= "top5hoods.json"
+   return(json)
 
 
 if __name__ =='__main__':

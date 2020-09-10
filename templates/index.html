@@ -204,8 +204,11 @@
           <div class= "col-lg-12">  
             <div class="page-header" >
               <h1>Neighborhoods Currently Included</h1>  
-
-              <div>{{results}}</div>
+              <div>
+                {% for table in tables %}
+                  {{titles[loop.index]}}
+                  {{ table|safe }}
+                {% endfor %}/div>
             </div>
           </div>
         </div>

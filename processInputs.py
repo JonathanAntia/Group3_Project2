@@ -88,8 +88,4 @@ def scores (dictionaryOfUserInput):
     ranked_neighborhoods = neighborhood_group.sort_values('Score',ascending=False)
 
     top5neighborhoods = ranked_neighborhoods.head()
-    top5hoods = top5neighborhoods.to_dict()
-
-    return top5hoods
-    
-#     return top5neighborhoods.to_json('top5hoods.json')
+    return top5neighborhoods
