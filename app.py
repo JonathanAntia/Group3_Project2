@@ -9,7 +9,6 @@ from flask import (Flask, render_template, jsonify, request, redirect)
 from flask_sqlalchemy import SQLAlchemy
 import processInputs 
 from userInputs import default_inputs
-import top5hoods
 
 app= Flask(__name__)
 
@@ -23,7 +22,7 @@ app= Flask(__name__)
 
 @app.route('/',  methods = ("POST", "GET"))
 def home():
- return top5hoods
+ return render_template('index.html', )
 
 if __name__ =='__main__':
     app.run(debug=True)
