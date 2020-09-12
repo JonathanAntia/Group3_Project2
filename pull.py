@@ -33,6 +33,9 @@ def SQL_Pull(budget):
                                   /appraisal_df['total_appraised_value_2018']*100
     results_df=appraisal_df[['id_2019','account','total_appraised_value_2019', 'pct_value_change']]
     
+    # Filter by budget on year 2019
+    results_df=results_df.loc[results_df.total_appraised_value_2019<=budget,:]
+
     #Read properties table
     properties_df=pd.read_sql_table('properties',engine)
     results_df=pd.merge(results_df,properties_df,on="account")
@@ -82,9 +85,6 @@ def SQL_Pull(budget):
     #  Read the neighborhoods Table
     neighborhoods_df=pd.read_sql_table('neighborhoods',engine)
     results_df=pd.merge(results_df,neighborhoods_df,on='neighborhood_code')
-    
-    # Filter by budget on year 2019
-    results_df=results_df.loc[results_df.total_appraised_value_2019<=budget,:]
     
     print('data pull complete')
     return (results_df) 
