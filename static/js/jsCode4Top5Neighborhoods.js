@@ -1,3 +1,7 @@
+///////////////////////////////////////////////////////////
+// GLOBAL VARIABLES
+///////////////////////////////////////////////////////////
+let data;
 
 ///////////////////////////////////////////////////////////
 // SCRIPT TO HANDLE USER SELECTED CRITERIA FROM HOME PAGE
@@ -22,45 +26,32 @@ window.addEventListener('keyup', function (event){
 });
 
 function handleResultButtonSubmit(){
+
+    // change the class of the home page to hide data
+    document.getElementById('content1').className += 'hideData';
+
+    // change the class of the results page to show data
+    document.getElementById('content2').classList.add('showData')
+    document.getElementById('content2').classList.remove('hideData');
+
     // get the value property of the each input
-    const inputBudget = d3.select('#budget').property('value');
-    const inputSalesWeight = d3.select('#salesWeight').property('value');
-    const inputCrimeWeight = d3.select('#crimeWeight').property('value');
-    const inputSchoolWeight = d3.select('#schoolWeight').property('value');
-    const inputAcreageWeight = d3.select('#acreageWeight').property('value');
-    const inputSQFTWeight = d3.select('#sqftWeight').property('value');
-    const inputFloodWeight = d3.select('#floodWeight').property('value');
-    const inputValueChangeWeight = d3.select('#changeValueWeight').property('value');
+    const budgetSlider = document.getElementById('budget');
+    const salesSlider = document.getElementById('salesWeight');
+    const crimeSlider = document.getElementById('crimeWeight');
+    const schoolSlider = document.getElementById('schoolWeight');
+    const acreageSlider = document.getElementById('acreageWeight');
+    const sqftSlider = document.getElementById('sqftWeight');
+    const floodSlider = document.getElementById('floodWeight');
+    const valuationSlider = document.getElementById('changeValueWeight');
 
-    // create an empty object to hold the user input
-    let weightCriteriaProvided = {};
-
-    // check if input criteria was provided and add to weightCriteria object
-    if (!(inputBudget == "")){weightCriteriaProvided.budget = inputBudget;}
-        else{weightCriteriaProvided.budget = 1000000;}
-    if (!(inputSalesWeight == "")){weightCriteriaProvided.salesWeight = inputSalesWeight;}
-        else{weightCriteriaProvided.salesWeight = 5;} // default value
-    if (!(inputCrimeWeight == "")){weightCriteriaProvided.crimeWeight = inputCrimeWeight;}
-        else{weightCriteriaProvided.crimeWeight = 5;} // default value
-    if (!(inputSchoolWeight == "")){weightCriteriaProvided.schoolWeight = inputSchoolWeight;}
-        else{weightCriteriaProvided.schoolWeight = 5;} // default value
-    if (!(inputAcreageWeight == "")){weightCriteriaProvided.acreageWeight = inputAcreageWeight;}
-        else{weightCriteriaProvided.acreageWeight = 5;} // default value
-    if (!(inputSQFTWeight == "")){weightCriteriaProvided.SQFTWeight = inputSQFTWeight;}
-        else{weightCriteriaProvided.SQFTWeight = 5;} // default value
-    if (!(inputFloodWeight == "")){weightCriteriaProvided.floodWeight = inputFloodWeight;}
-        else{weightCriteriaProvided.floodWeight = 5;} // default value
-    if (!(inputValueChangeWeight == "")){weightCriteriaProvided.ValueChangeWeight = inputValueChangeWeight;}
-        else{weightCriteriaProvided.ValueChangeWeight = 5;} // default value
-    
-    const w_budget = weightCriteriaProvided.budget;
-    const w_sales = weightCriteriaProvided.salesWeight;
-    const w_crime = weightCriteriaProvided.crimeWeight;
-    const w_schools = weightCriteriaProvided.schoolWeight;
-    const w_acreage = weightCriteriaProvided.acreageWeight;
-    const w_SQ_FT = weightCriteriaProvided.SQFTWeight;
-    const w_flood = weightCriteriaProvided.floodWeight;
-    const w_change = weightCriteriaProvided.ValueChangeWeightt;
+    const w_budget = budgetSlider.value;
+    const w_sales = salesSlider.value;
+    const w_crime = crimeSlider.value;
+    const w_schools = schoolSlider.value;
+    const w_acreage = acreageSlider.value;
+    const w_SQ_FT = sqftSlider.value;
+    const w_flood = floodSlider.value;
+    const w_change = valuationSlider.value;
 
     // call the function that will update the content of the page based on user's input
     return top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w_SQ_FT,w_flood,w_change)
@@ -72,7 +63,8 @@ function handleResultButtonSubmit(){
 function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w_SQ_FT,w_flood,w_change){
     d3.json(`/api/top5neighborhoods/${w_budget}/${w_sales}/${w_crime}/${w_schools}/${w_acreage}/${w_SQ_FT}/${w_flood}/${w_change}`)
     .then((response)=>{
-        const data = response;
+        data = response;
+        // const data = response;
         console.log(data);
 
         /////////////////////////////////////////
@@ -88,6 +80,7 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         const sqft = data.map(entry=> entry['SQ_FT Index']);
         const flood = data.map(entry=> entry['Flood Risk Index']);
         const valuation = data.map(entry=> entry['Valuation Index']);
+        const residentialCounts = data.map(entry=> entry['Counts']);
 
         // create an object with table data
         const tableData = neighborhood.map((item,i)=>({
@@ -98,16 +91,26 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
             acreage: acreage[i],
             sqft: sqft[i],
             flood: flood[i],
-            valuation: valuation[i]
+            valuation: valuation[i],
+            numResidences: residentialCounts[i]
         }));
 
         // use d3 to select the table body
-        const tbody = d3.select('tbody');
+        const tbody = d3.select('.table');
 
         console.log('Neighborhood Data:')
         console.log(tableData);
 
         // add code to delete an existing table before adding the new one
+
+        // add table headers
+        const headers = Object.keys(tableData);
+
+        headers.forEach(item => {
+            let columnHeader = tbody.append('th');
+            columnHeader.text(item);
+        });
+
         // add data to the table
         const fullTable = tableData.forEach(neighborhood => {
             let row = tbody.append('tr');
@@ -241,11 +244,6 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         };
 
         Plotly.newPlot('barPlotParameter', parametersTrace, groupLayout);
-
-        /////////////////////////////////////////////////////
-        // GEO-INTERACTIVE NEIGBORHOODS
-        // NEED MORE INFORMATION ABOUT THE CONTENTS OF THIS MAP
-        /////////////////////////////////////////////////////
     });  
 };
 //////////////////////////////////////////////////////////
@@ -285,145 +283,140 @@ function handleBarChartSubmit(){
 }
 
 function updateInteractiveBarChart(parameter){
-    d3.json('static/data/data.json').then((importedData)=>{
+    // array of available parameters to chose from
+    const parametersArr = [
+        "SalesIndex",
+        "CrimeIndex",
+        "SchoolRating",
+        "AcreageIndex",
+        "SQFTIndex",
+        "FloodIndex",
+        "ValueChangeIndex"
+    ];
 
-        const data = importedData;
+    // array of available neighborhoods
+    const neighborhoodsArr = data.map(item => item.Neighborhood);
 
-        // array of available parameters to chose from
-        const parametersArr = [
-            "SalesIndex",
-            "CrimeIndex",
-            "SchoolRating",
-            "AcreageIndex",
-            "SQFTIndex",
-            "FloodIndex",
-            "ValueChangeIndex"
-        ];
+    const parameterSelected = parameter;
+    console.log(parameterSelected);
 
-        // array of available neighborhoods
-        const neighborhoodsArr = data.map(item => item.Neighborhood);
+    if(parametersArr.includes(parameterSelected)){
+    // create a trace object with x as the neighborhood and y as the userSelected parameter
+    const x = data.map(item => item.Neighborhood);
+    let y = chooseParameter(data, parameterSelected);
 
-        const parameterSelected = parameter;
-        console.log(parameterSelected);
-
-        if(parametersArr.includes(parameterSelected)){
-        // create a trace object with x as the neighborhood and y as the userSelected parameter
-        const x = data.map(item => item.Neighborhood);
-        let y = chooseParameter(data, parameterSelected);
-
-        const ParameterTrace = {
-            type: 'bar',
-            x: data.map(item => item.Neighborhood),
-            y: chooseParameter(data, parameterSelected)
+    const ParameterTrace = {
+        type: 'bar',
+        x: data.map(item => item.Neighborhood),
+        y: chooseParameter(data, parameterSelected)
+    }
+    // define layout
+    const parameterLayout = {
+        title: "Top 5 Neighborhoods",
+        yaxis: {
+            automargin: true,
+            rangemode: 'tozero',
+            title: parameterSelected
+        },
+        xaxis: {
+            rangemode: 'tozero'
         }
-        // define layout
-        const parameterLayout = {
-            title: "Top 5 Neighborhoods",
-            yaxis: {
-                automargin: true,
-                rangemode: 'tozero',
-                title: parameterSelected
-            },
-            xaxis: {
-                rangemode: 'tozero'
-            }
-        }
-            Plotly.newPlot('barPlotParameter2', [ParameterTrace], parameterLayout);
-        }
-        else if(neighborhoodsArr.includes(parameterSelected)){
-            // filter data by neighborhood selected
-            const neighborhoodData = data.filter(item => item.Neighborhood == parameterSelected);
+    }
+        Plotly.newPlot('barPlotParameter2', [ParameterTrace], parameterLayout);
+    }
+    else if(neighborhoodsArr.includes(parameterSelected)){
+        // filter data by neighborhood selected
+        const neighborhoodData = data.filter(item => item.Neighborhood == parameterSelected);
 
-            const x =  ["SalesIndex","CrimeIndex","SchoolRating","AcreageIndex",
-                        "SQFTIndex","FloodIndex","ValueChangeIndex"];
+        const x =  ["SalesIndex","CrimeIndex","SchoolRating","AcreageIndex",
+                    "SQFTIndex","FloodIndex","ValueChangeIndex"];
 
-            const y = [
-                neighborhoodData.SalesIndex,
-                neighborhoodData.CrimeIndex,
-                neighborhoodData.SchoolRating,
-                neighborhoodData.AcreageIndex,
-                neighborhoodData.SQFTIndex,
-                neighborhoodData.FloodIndex,
-                neighborhoodData.ValueChangeIndex
-            ]
-            const neighborhoodTrace = {
-                x: x,
-                y: y,
-                type: 'bar'
-            };
-
-            const neighborhoodLayout = {
-                yaxis:{
-                    title: 'Index'
-                }
-            };
-    
-            Plotly.newPlot('barPlotParameter2', [neighborhoodTrace], neighborhoodLayout);
-        }
-        else {
-        // create a bar chart to show all parameter per neighborhood
-        const x = data.map(item => item.Neighborhood);
-
-        const salesIndexTrace = {
+        const y = [
+            neighborhoodData.SalesIndex,
+            neighborhoodData.CrimeIndex,
+            neighborhoodData.SchoolRating,
+            neighborhoodData.AcreageIndex,
+            neighborhoodData.SQFTIndex,
+            neighborhoodData.FloodIndex,
+            neighborhoodData.ValueChangeIndex
+        ]
+        const neighborhoodTrace = {
             x: x,
-            y: data.map(item => item.SalesIndex),
-            name: 'Sales Index',
-            type: 'bar'
-        };
-        const crimeIndexTrace = {
-            x: x,
-            y: data.map(item => item.CrimeIndex),
-            name: 'Crime Index',
-            type: 'bar'
-        };
-        const schoolRatingTrace = {
-            x: x,
-            y: data.map(item => item.SchoolRating),
-            name: 'School Rating',
-            type: 'bar'
-        };
-        const sqftIndexTrace = {
-            x: x,
-            y: data.map(item => item.SQFTIndex),
-            name: 'SQFT Index',
-            type: 'bar'
-        };
-        const acreageIndexTrace = {
-            x: x,
-            y: data.map(item => item.AcreageIndex),
-            name: 'Acreage Index',
-            type: 'bar'
-        };
-        const floodIndexTrace = {
-            x: x,
-            y: data.map(item => item.FloodIndex),
-            name: 'Flood Index',
-            type: 'bar'
-        };
-        const valueChangeIndexTrace = {
-            x: x,
-            y: data.map(item => item.ValueChangeIndex),
-            name: 'Value Change Index',
+            y: y,
             type: 'bar'
         };
 
-        const parametersTrace = [salesIndexTrace, 
-                        crimeIndexTrace, 
-                        schoolRatingTrace,
-                        acreageIndexTrace,
-                        sqftIndexTrace,
-                        floodIndexTrace,
-                        valueChangeIndexTrace,
-                    ];
-
-        const groupLayout = {
-            barmode: 'group',
+        const neighborhoodLayout = {
             yaxis:{
                 title: 'Index'
             }
         };
 
-        Plotly.newPlot('barPlotParameter2', parametersTrace, groupLayout);
+        Plotly.newPlot('barPlotParameter2', [neighborhoodTrace], neighborhoodLayout);
+    }
+    else {
+    // create a bar chart to show all parameter per neighborhood
+    const x = data.map(item => item.Neighborhood);
+
+    const salesIndexTrace = {
+        x: x,
+        y: data.map(item => item.SalesIndex),
+        name: 'Sales Index',
+        type: 'bar'
+    };
+    const crimeIndexTrace = {
+        x: x,
+        y: data.map(item => item.CrimeIndex),
+        name: 'Crime Index',
+        type: 'bar'
+    };
+    const schoolRatingTrace = {
+        x: x,
+        y: data.map(item => item.SchoolRating),
+        name: 'School Rating',
+        type: 'bar'
+    };
+    const sqftIndexTrace = {
+        x: x,
+        y: data.map(item => item.SQFTIndex),
+        name: 'SQFT Index',
+        type: 'bar'
+    };
+    const acreageIndexTrace = {
+        x: x,
+        y: data.map(item => item.AcreageIndex),
+        name: 'Acreage Index',
+        type: 'bar'
+    };
+    const floodIndexTrace = {
+        x: x,
+        y: data.map(item => item.FloodIndex),
+        name: 'Flood Index',
+        type: 'bar'
+    };
+    const valueChangeIndexTrace = {
+        x: x,
+        y: data.map(item => item.ValueChangeIndex),
+        name: 'Value Change Index',
+        type: 'bar'
+    };
+
+    const parametersTrace = [salesIndexTrace, 
+                    crimeIndexTrace, 
+                    schoolRatingTrace,
+                    acreageIndexTrace,
+                    sqftIndexTrace,
+                    floodIndexTrace,
+                    valueChangeIndexTrace,
+                ];
+
+    const groupLayout = {
+        barmode: 'group',
+        yaxis:{
+            title: 'Index'
         }
-    });
+    };
+
+    Plotly.newPlot('barPlotParameter2', parametersTrace, groupLayout);
+    }
 };
