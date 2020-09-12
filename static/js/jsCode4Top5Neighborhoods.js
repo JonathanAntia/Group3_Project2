@@ -37,31 +37,41 @@ function handleResultButtonSubmit(){
 
     // check if input criteria was provided and add to weightCriteria object
     if (!(inputBudget == "")){weightCriteriaProvided.budget = inputBudget;}
-        else{window.alert('Please select a budget');}
+        else{weightCriteriaProvided.budget = 1000000;}
     if (!(inputSalesWeight == "")){weightCriteriaProvided.salesWeight = inputSalesWeight;}
-        else{weightCriteriaProvided.salesWeight = 0;} // default value
+        else{weightCriteriaProvided.salesWeight = 5;} // default value
     if (!(inputCrimeWeight == "")){weightCriteriaProvided.crimeWeight = inputCrimeWeight;}
-        else{weightCriteriaProvided.crimeWeight = 0;} // default value
+        else{weightCriteriaProvided.crimeWeight = 5;} // default value
     if (!(inputSchoolWeight == "")){weightCriteriaProvided.schoolWeight = inputSchoolWeight;}
-        else{weightCriteriaProvided.schoolWeight = 0;} // default value
+        else{weightCriteriaProvided.schoolWeight = 5;} // default value
     if (!(inputAcreageWeight == "")){weightCriteriaProvided.acreageWeight = inputAcreageWeight;}
-        else{weightCriteriaProvided.acreageWeight = 0;} // default value
+        else{weightCriteriaProvided.acreageWeight = 5;} // default value
     if (!(inputSQFTWeight == "")){weightCriteriaProvided.SQFTWeight = inputSQFTWeight;}
-        else{weightCriteriaProvided.SQFTWeight = 0;} // default value
+        else{weightCriteriaProvided.SQFTWeight = 5;} // default value
     if (!(inputFloodWeight == "")){weightCriteriaProvided.floodWeight = inputFloodWeight;}
-        else{weightCriteriaProvided.floodWeight = 0;} // default value
-    if (!(inputValueChangeWeight == "")){weightCriteriaProvided.ValueChangeWeight = inputChangeWeight;}
-        else{weightCriteriaProvided.ValueChangeWeight = 0;} // default value
+        else{weightCriteriaProvided.floodWeight = 5;} // default value
+    if (!(inputValueChangeWeight == "")){weightCriteriaProvided.ValueChangeWeight = inputValueChangeWeight;}
+        else{weightCriteriaProvided.ValueChangeWeight = 5;} // default value
     
+    const w_budget = weightCriteriaProvided.budget;
+    const w_sales = weightCriteriaProvided.salesWeight;
+    const w_crime = weightCriteriaProvided.crimeWeight;
+    const w_schools = weightCriteriaProvided.schoolWeight;
+    const w_acreage = weightCriteriaProvided.acreageWeight;
+    const w_SQ_FT = weightCriteriaProvided.SQFTWeight;
+    const w_flood = weightCriteriaProvided.floodWeight;
+    const w_change = weightCriteriaProvided.ValueChangeWeightt;
+
     // call the function that will update the content of the page based on user's input
-    top5NeighborhoodsContent(weightCriteriaProvided)
+    return top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w_SQ_FT,w_flood,w_change)
 }
 
 //////////////////////////////////////////////////////////////////
 // FUNCTION TO PROVIDE RESULTS BASED ON USER'S SELECTION
 //////////////////////////////////////////////////////////////////
-function top5NeighborhoodsContent(weightCriteriaProvided){
-    d3.json(`api_url/${weightCriteriaProvided}`).then((response)=>{
+function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w_SQ_FT,w_flood,w_change){
+    d3.json(`/api/top5neighborhoods/${w_budget}/${w_sales}/${w_crime}/${w_schools}/${w_acreage}/${w_SQ_FT}/${w_flood}/${w_change}`)
+    .then((response)=>{
         const data = response;
         console.log(data);
 
@@ -70,14 +80,14 @@ function top5NeighborhoodsContent(weightCriteriaProvided){
         /////////////////////////////////////////
 
         // extract the data needed for the table
-        const neighborhood = data.map(entry=> entry.Neighborhood);
-        const sales = data.map(entry=> entry.SalesIndex);
-        const crime = data.map(entry=> entry.CrimeIndex);
-        const school = data.map(entry=> entry.SchoolRating);
-        const acreage = data.map(entry=> entry.AcreageIndex);
-        const sqft = data.map(entry=> entry.SQFTIndex);
-        const flood = data.map(entry=> entry.FloodIndex);
-        const valuation = data.map(entry=> entry.ValueChangeIndex);
+        const neighborhood = data.map(entry=> entry.neighborhood);
+        const sales = data.map(entry=> entry['Sales Index']);
+        const crime = data.map(entry=> entry['Crime Index']);
+        const school = data.map(entry=> entry['School Rating Index']);
+        const acreage = data.map(entry=> entry['Acreage Index']);
+        const sqft = data.map(entry=> entry['SQ_FT Index']);
+        const flood = data.map(entry=> entry['Flood Risk Index']);
+        const valuation = data.map(entry=> entry['Valuation Index']);
 
         // create an object with table data
         const tableData = neighborhood.map((item,i)=>({
