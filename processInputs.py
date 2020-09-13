@@ -72,7 +72,7 @@ def scores (dictionaryOfUserInput):
             'total_appraised_value_2019','neighborhood']]
 
     # group parameters by neighborhood name
-    neighborhood_group = parameter_and_score.groupby(['neighborhood']).mean()
+    neighborhood_group = parameter_and_score.groupby(['neighborhood'],as_index=False).mean()
     
     # add count of residences per neighborhood
     residence_count = parameter_and_score.groupby(["neighborhood"]).count()
@@ -122,5 +122,7 @@ def scores (dictionaryOfUserInput):
     # sort scores
     ranked_neighborhoods = neighborhood_group_with_counts.sort_values('Score',ascending=False)
     top5neighborhoods= ranked_neighborhoods.head()
+
+
 
     return top5neighborhoods 

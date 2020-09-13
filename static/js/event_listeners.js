@@ -28,7 +28,8 @@ window.addEventListener('keyup', function (event){
 function handleResultButtonSubmit(){
 
     // change the class of the home page to hide data
-    document.getElementById('content1').className += 'hideData';
+    document.getElementById('content1').classList.add('hideData')
+    document.getElementById('content1').classList.remove('showData');
 
     // change the class of the results page to show data
     document.getElementById('content2').classList.add('showData')
@@ -76,87 +77,59 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         /////////////////////////////////////////
    
         // extract the data needed for the table
-        // const neighborhood = Object.keys(data[0]);
-        // console.log(`neighborhoods: ${neighborhood}`)
-        // const sales = Object.values(data['Sales Index']);
-        // console.log(`sales: ${sales}`)
-        // const crime = Object.values(data['Crime Index']);
-        // const school = Object.values(data['School Rating Index']);
-        // const acreage = Object.values(data['Acreage Index']);
-        // const sqft = Object.values(data['SQ_FT Index']);
-        // const flood = Object.values(data['Flood Risk Index']);
-        // const valuation = Object.values(data['Valuation Index']);
-        // const residentialCounts = Object.values(data['Counts']);
-        // const scores = Object.values(data['Score']);
-        // console.log(`scores: ${scores}`)
-        // const sales = data.map(entry=> Object.values(entry['Sales Index']));
-        // console.log(`sales: ${sales}`)
-        // const crime = data.map(entry=> Object.values(entry['Crime Index']));
-        // console.log(`crime: ${crime}`)
-        // const school = data.map(entry=> Object.values(entry['School Rating Index']));
-        // console.log(`school: ${school}`)
-        // const acreage = data.map(entry=> Object.values(entry['Acreage Index']));
-        // console.log(`acreage : ${acreage }`)
-        // const sqft = data.map(entry=> Object.values(entry['SQ_FT Index']));
-        // console.log(`sqft  ${sqft }`)
-        // const flood = data.map(entry=> Object.values(entry['Flood Risk Index']));
-        // console.log(`flood: ${flood}`)
-        // const valuation = data.map(entry=> Object.values(entry['Valuation Index']));
-        // console.log(`valuation: ${valuation}`)
-        // const residentialCounts = data.map(entry=> Object.values(entry['Counts']));
-        // console.log(`residentialCounts: ${residentialCounts}`)
-        // const sales = data.Object.values.map(entry=> entry['Sales Index']);
-        // const crime = data.map(entry=> entry['Crime Index']);
-        // const school = data.map(entry=> entry['School Rating Index']);
-        // const acreage = data.map(entry=> entry['Acreage Index']);
-        // const sqft = data.map(entry=> entry['SQ_FT Index']);
-        // const flood = data.map(entry=> entry['Flood Risk Index']);
-        // const valuation = data.map(entry=> entry['Valuation Index']);
-        // const residentialCounts = data.map(entry=> entry['Counts']);
+        const neighborhood = [Object.values(data["neighborhood"])];
+        console.log(`neighborhood: ${neighborhood}`)
+        const sales = [Object.values(data['Sales Index'])];
+        console.log(`sales: ${sales}`)
+        const crime = [Object.values(data['Crime Index'])];
+        const school = [Object.values(data['School Rating Index'])];
+        const acreage = [Object.values(data['Acreage Index'])];
+        const sqft = [Object.values(data['SQ_FT Index'])];
+        const flood = [Object.values(data['Flood Risk Index'])];
+        const valuation = [Object.values(data['Valuation Index'])];
+        const residentialCounts = [Object.values(data['Counts'])];
+        const scores = [Object.values(data['Score'])];
+        console.log(`scores: ${scores}`)
+       
 
         // create an object with table data
-        // const tableData = neighborhood.map((item,i)=>({
-        //     neighborhood: item, 
-        //     sales: sales[i],
-        //     crime: crime[i],
-        //     school: school[i],
-        //     acreage: acreage[i],
-        //     sqft: sqft[i],
-        //     flood: flood[i],
-        //     valuation: valuation[i],
-        //     numResidences: residentialCounts[i]
-        // }));
+        const tableData = neighborhood.map((item,i)=>({
+            neighborhood: item, 
+            sales: sales[i],
+            crime: crime[i],
+            school: school[i],
+            acreage: acreage[i],
+            sqft: sqft[i],
+            flood: flood[i],
+            valuation: valuation[i],
+            numResidences: residentialCounts[i]
+        }));
 
-        // const tbody = d3.select('.table');
 
-        // console.log('Neighborhood Data:')
-        // console.log(tableData);
+        console.log('Neighborhood Data:')
+        console.log(tableData[0]);
 
-        // // use d3 to select the table body
-        // const tbody = d3.select('.table');
-
-        // console.log('Neighborhood Data:')
-        // console.log(tableData);
 
         // add code to delete an existing table before adding the new one
 
         // // add table headers
-        // const headers = Object.keys(tableData);
+        const headers = Object.keys(tableData[0]);
+        console.log(headers)
 
-        // headers.forEach(item => {
-        //     let columnHeader = tbody.append('th');
-        //     columnHeader.text(item);
-        // });
+        headers.forEach(item => {
+            let columnHeader = tbody.append('th');
+            columnHeader.text(item);
+        });
 
         // // add data to the table
-        // const fullTable = tableData.forEach(neighborhood => {
-        //     let row = tbody.append('tr');
-        //     Object.values(neighborhood).forEach(info => {
-        //         let cell = row.append('td');
-        //         cell.text(info);
-        //     })
+        const fullTable = tableData.forEach(neighborhood => {
+            let row = tbody.append('tr');
+            Object.values(neighborhood).forEach(info => {
+                let cell = row.append('td');
+                cell.text(info);
+            })
             
-        // });
+        });
     });
 };
 //         ///////////////////////////////////////////////////
