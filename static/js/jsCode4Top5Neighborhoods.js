@@ -1,14 +1,22 @@
 ///////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
 ///////////////////////////////////////////////////////////
-let data;
+let data,
+    neighborhood,       
+    sales,
+    crime,
+    school,
+    acreage,
+    sqft,
+    flood,
+    valuation;
 
 ///////////////////////////////////////////////////////////
 // SCRIPT TO HANDLE USER SELECTED CRITERIA FROM HOME PAGE
 ///////////////////////////////////////////////////////////
 
 // create a tbody variable to get a handle on the html element
-const tbody = d3.select('tbody');
+// const tbody = d3.select('tbody');
 
 // select the results button
 const button = d3.select('#filter-btn');
@@ -27,8 +35,10 @@ window.addEventListener('keyup', function (event){
 
 function handleResultButtonSubmit(){
 
-    // change the class of the home page to hide data
-    document.getElementById('content1').className += 'hideData';
+    // change the class of of the #content1 html element to hide data
+    document.getElementById('content1').classList.add('hideData');
+    document.getElementById('content1').classList.remove('showData');
+
 
     // change the class of the results page to show data
     document.getElementById('content2').classList.add('showData')
@@ -42,9 +52,10 @@ function handleResultButtonSubmit(){
     const acreageSlider = document.getElementById('acreageWeight');
     const sqftSlider = document.getElementById('sqftWeight');
     const floodSlider = document.getElementById('floodWeight');
-    const valuationSlider = document.getElementById('changeValueWeight');
+    const valuationSlider = document.getElementById('valueWeight');
 
     const w_budget = budgetSlider.value;
+    console.log(w_budget);
     const w_sales = salesSlider.value;
     const w_crime = crimeSlider.value;
     const w_schools = schoolSlider.value;
@@ -61,10 +72,11 @@ function handleResultButtonSubmit(){
 // FUNCTION TO PROVIDE RESULTS BASED ON USER'S SELECTION
 //////////////////////////////////////////////////////////////////
 function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w_SQ_FT,w_flood,w_change){
-    d3.json(`/api/top5neighborhoods/${w_budget}/${w_sales}/${w_crime}/${w_schools}/${w_acreage}/${w_SQ_FT}/${w_flood}/${w_change}`)
+    d3.json(`/api/jsonData/${w_budget}/${w_sales}/${w_crime}/${w_schools}/${w_acreage}/${w_SQ_FT}/${w_flood}/${w_change}`)
     .then((response)=>{
         data = response;
         // const data = response;
+        console.log('jsonData:')
         console.log(data);
 
         /////////////////////////////////////////
@@ -72,39 +84,41 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         /////////////////////////////////////////
 
         // extract the data needed for the table
-        const neighborhood = data.map(entry=> entry.neighborhood);
-        const sales = data.map(entry=> entry['Sales Index']);
-        const crime = data.map(entry=> entry['Crime Index']);
-        const school = data.map(entry=> entry['School Rating Index']);
-        const acreage = data.map(entry=> entry['Acreage Index']);
-        const sqft = data.map(entry=> entry['SQ_FT Index']);
-        const flood = data.map(entry=> entry['Flood Risk Index']);
-        const valuation = data.map(entry=> entry['Valuation Index']);
-        const residentialCounts = data.map(entry=> entry['Counts']);
+        neighborhood = Object.keys(data['latitude']);
+        console.log('Neighborhoods:')
+        console.log(neighborhood);
+        sales = Object.values(data['Sales Index']);
+        crime = Object.values(data['Crime Index']);
+        school = Object.values(data['School Rating Index']);
+        acreage = Object.values(data['Acreage Index']);
+        sqft = Object.values(data['SQ_FT Index']);
+        flood = Object.values(data['Flood Risk Index']);
+        valuation = Object.values(data['Valuation Index']);
+        residentialCounts = Object.values(data['Counts']);
+        scores = Object.values(data['Score']);
 
         // create an object with table data
         const tableData = neighborhood.map((item,i)=>({
             neighborhood: item, 
-            sales: sales[i],
-            crime: crime[i],
-            school: school[i],
-            acreage: acreage[i],
-            sqft: sqft[i],
-            flood: flood[i],
-            valuation: valuation[i],
-            numResidences: residentialCounts[i]
+            sales: Math.round(sales[i]),
+            crime: Math.round(crime[i]),
+            school: Math.round(school[i]),
+            acreage: Math.round(acreage[i]),
+            sqft: Math.round(sqft[i]),
+            flood: Math.round(flood[i]),
+            valuation: Math.round(valuation[i]),
+            numResidences: Math.round(residentialCounts[i])
         }));
-
-        // use d3 to select the table body
-        const tbody = d3.select('.table');
-
         console.log('Neighborhood Data:')
         console.log(tableData);
+
+        // use d3 to select the table body
+        const tbody = d3.select('#table');
 
         // add code to delete an existing table before adding the new one
 
         // add table headers
-        const headers = Object.keys(tableData);
+        const headers = Object.keys(tableData[0]);
 
         headers.forEach(item => {
             let columnHeader = tbody.append('th');
@@ -120,6 +134,7 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
             })
             
         });
+
         ///////////////////////////////////////////////////
         // SUMMARY MAP - TOP 5 NEIGHBORHOODS
         ///////////////////////////////////////////////////
@@ -141,22 +156,34 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
             accessToken: API_KEY
         }).addTo(myMap1)
         
-        // add marker to each neighborhood and popup with info
-        data.forEach(item => {
-            L.marker([item.Latitude, item.Longitude])
-            .bindPopup("<h1>"+item.Neighborhood+"</h1> <h3>Total Score: "+item.TotalScore+"</h3")
+        // create an object with info per neighborhood
+        const latitudes = Object.values(data['latitude']);
+        const longitudes = Object.values(data['longitude']);
+
+        const neighborhoodData = neighborhood.map((item,i)=>({
+            neighborhoodName: item, 
+            location: [latitudes[i],longitudes[i]],
+            score: Math.round(scores[i]),
+        }));
+
+        // loop through the neighborhood object and plot each item on the map
+        neighborhoodData.forEach(hood =>{
+            L.marker(hood.location)
+            .bindPopup("<h7>"+hood.neighborhoodName+"</h7><br><h8>Total Score: "+hood.score+"</h8>")
             .addTo(myMap1)
-        });   
-    
+        })
+
         ////////////////////////////////////////////////
         // HORIZONTAL BAR CHART
         // NEIGHBORHOOD RANKING BASED ON TOTAL SCORE
         ////////////////////////////////////////////////
 
         // create a horizontal bar chart with average score per neighborhood
-        const coordinates = data.map(item => [item.TotalScore, item.Neighborhood]);
+        const coordinates = neighborhoodData.map(item => [item.score, item.neighborhoodName]);
         const sorted = coordinates.sort((a,z)=> a[0]- z[0]);
-
+        // console.log(coordinates);
+        console.log('horizontalBarChartData:')
+        console.log(sorted);
         // create a trace object with x as the score and y as the neighborhood name
         const NeighborhoodTrace = {
             type: 'bar',
@@ -182,47 +209,45 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         // INTERACTIVE BAR CHART
         /////////////////////////////////////////////
         // create a bar chart to show all parameter per neighborhood
-        const x = data.map(item => item.Neighborhood);
-
         const salesIndexTrace = {
-            x: x,
-            y: data.map(item => item.SalesIndex),
+            x: neighborhood,
+            y: sales,
             name: 'Sales Index',
             type: 'bar'
         };
         const crimeIndexTrace = {
-            x: x,
-            y: data.map(item => item.CrimeIndex),
+            x: neighborhood,
+            y: crime,
             name: 'Crime Index',
             type: 'bar'
         };
         const schoolRatingTrace = {
-            x: x,
-            y: data.map(item => item.SchoolRating),
+            x: neighborhood,
+            y: school,
             name: 'School Rating',
             type: 'bar'
         };
-        const sqftIndexTrace = {
-            x: x,
-            y: data.map(item => item.SQFTIndex),
-            name: 'SQFT Index',
-            type: 'bar'
-        };
         const acreageIndexTrace = {
-            x: x,
-            y: data.map(item => item.AcreageIndex),
+            x: neighborhood,
+            y: acreage,
             name: 'Acreage Index',
             type: 'bar'
         };
+        const sqftIndexTrace = {
+            x: neighborhood,
+            y: sqft,
+            name: 'SQFT Index',
+            type: 'bar'
+        };
         const floodIndexTrace = {
-            x: x,
-            y: data.map(item => item.FloodIndex),
+            x: neighborhood,
+            y: flood,
             name: 'Flood Index',
             type: 'bar'
         };
         const valueChangeIndexTrace = {
-            x: x,
-            y: data.map(item => item.ValueChangeIndex),
+            x: neighborhood,
+            y: valuation,
             name: 'Value Change Index',
             type: 'bar'
         };
@@ -251,22 +276,22 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
 //////////////////////////////////////////////////////////
 
 // Function to change bar chart parameters based on user selection    
-function chooseParameter (data, parameter){
+function chooseParameter (parameter){
     switch(parameter){
         case "SaleIndex":
-            return data.map(item => item.SaleIndex);
+            return sales;
         case "CrimeIndex":
-            return data.map(item => item.CimeIndex);
+            return crime;
         case "SchoolRating":
-            return data.map(item => item.SchoolRating);
+            return school;
         case "AcreageIndex":
-            return data.map(item => item.AcreageIndex);
+            return acreage;
         case "SQFTIndex":
-            return data.map(item => item.SQFTIndex);
+            return sqft;
         case "FloodIndex":
-            return data.map(item => item.FloodIndex);
+            return flood;
        default:
-            return data.map(item => item.ValueChangeIndex);
+            return valuation;
     }
 };
 
@@ -295,20 +320,17 @@ function updateInteractiveBarChart(parameter){
     ];
 
     // array of available neighborhoods
-    const neighborhoodsArr = data.map(item => item.Neighborhood);
+    const neighborhoodsArr = neighborhood;
 
     const parameterSelected = parameter;
     console.log(parameterSelected);
 
     if(parametersArr.includes(parameterSelected)){
     // create a trace object with x as the neighborhood and y as the userSelected parameter
-    const x = data.map(item => item.Neighborhood);
-    let y = chooseParameter(data, parameterSelected);
-
     const ParameterTrace = {
         type: 'bar',
-        x: data.map(item => item.Neighborhood),
-        y: chooseParameter(data, parameterSelected)
+        x: neighborhoodsArr,
+        y: chooseParameter(parameterSelected)
     }
     // define layout
     const parameterLayout = {
@@ -322,81 +344,79 @@ function updateInteractiveBarChart(parameter){
             rangemode: 'tozero'
         }
     }
-        Plotly.newPlot('barPlotParameter2', [ParameterTrace], parameterLayout);
+        Plotly.newPlot('barPlotParameter', [ParameterTrace], parameterLayout);
     }
-    else if(neighborhoodsArr.includes(parameterSelected)){
-        // filter data by neighborhood selected
-        const neighborhoodData = data.filter(item => item.Neighborhood == parameterSelected);
+    // else if(neighborhoodsArr.includes(parameterSelected)){
+    //     // filter data by neighborhood selected
+    //     const neighborhoodData = data.filter(item => item.Neighborhood == parameterSelected);
 
-        const x =  ["SalesIndex","CrimeIndex","SchoolRating","AcreageIndex",
-                    "SQFTIndex","FloodIndex","ValueChangeIndex"];
+    //     const x =  ["SalesIndex","CrimeIndex","SchoolRating","AcreageIndex",
+    //                 "SQFTIndex","FloodIndex","ValueChangeIndex"];
 
-        const y = [
-            neighborhoodData.SalesIndex,
-            neighborhoodData.CrimeIndex,
-            neighborhoodData.SchoolRating,
-            neighborhoodData.AcreageIndex,
-            neighborhoodData.SQFTIndex,
-            neighborhoodData.FloodIndex,
-            neighborhoodData.ValueChangeIndex
-        ]
-        const neighborhoodTrace = {
-            x: x,
-            y: y,
-            type: 'bar'
-        };
+    //     const y = [
+    //         neighborhoodData.SalesIndex,
+    //         neighborhoodData.CrimeIndex,
+    //         neighborhoodData.SchoolRating,
+    //         neighborhoodData.AcreageIndex,
+    //         neighborhoodData.SQFTIndex,
+    //         neighborhoodData.FloodIndex,
+    //         neighborhoodData.ValueChangeIndex
+    //     ]
+    //     const neighborhoodTrace = {
+    //         x: x,
+    //         y: y,
+    //         type: 'bar'
+    //     };
 
-        const neighborhoodLayout = {
-            yaxis:{
-                title: 'Index'
-            }
-        };
+    //     const neighborhoodLayout = {
+    //         yaxis:{
+    //             title: 'Index'
+    //         }
+    //     };
 
-        Plotly.newPlot('barPlotParameter2', [neighborhoodTrace], neighborhoodLayout);
-    }
+    //     Plotly.newPlot('barPlotParameter', [neighborhoodTrace], neighborhoodLayout);
+    // }
     else {
     // create a bar chart to show all parameter per neighborhood
-    const x = data.map(item => item.Neighborhood);
-
     const salesIndexTrace = {
-        x: x,
-        y: data.map(item => item.SalesIndex),
+        x: neighborhoodsArr,
+        y: sales,
         name: 'Sales Index',
         type: 'bar'
     };
     const crimeIndexTrace = {
-        x: x,
-        y: data.map(item => item.CrimeIndex),
+        x: neighborhoodsArr,
+        y: crime,
         name: 'Crime Index',
         type: 'bar'
     };
     const schoolRatingTrace = {
-        x: x,
-        y: data.map(item => item.SchoolRating),
+        x: neighborhoodsArr,
+        y: school,
         name: 'School Rating',
         type: 'bar'
     };
-    const sqftIndexTrace = {
-        x: x,
-        y: data.map(item => item.SQFTIndex),
-        name: 'SQFT Index',
-        type: 'bar'
-    };
     const acreageIndexTrace = {
-        x: x,
-        y: data.map(item => item.AcreageIndex),
+        x: neighborhoodsArr,
+        y: acreage,
         name: 'Acreage Index',
         type: 'bar'
     };
+    const sqftIndexTrace = {
+        x: neighborhoodsArr,
+        y: sqft,
+        name: 'SQFT Index',
+        type: 'bar'
+    };
     const floodIndexTrace = {
-        x: x,
-        y: data.map(item => item.FloodIndex),
+        x: neighborhoodsArr,
+        y: flood,
         name: 'Flood Index',
         type: 'bar'
     };
     const valueChangeIndexTrace = {
-        x: x,
-        y: data.map(item => item.ValueChangeIndex),
+        x: neighborhoodsArr,
+        y: valuation,
         name: 'Value Change Index',
         type: 'bar'
     };
@@ -417,6 +437,6 @@ function updateInteractiveBarChart(parameter){
         }
     };
 
-    Plotly.newPlot('barPlotParameter2', parametersTrace, groupLayout);
+    Plotly.newPlot('barPlotParameter', parametersTrace, groupLayout);
     }
 };
