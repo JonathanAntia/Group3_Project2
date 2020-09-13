@@ -1,5 +1,6 @@
 # Dependencies
 import pandas as pd
+from pull import SQL_Pull
 
 def scores (w_budget, w_sales, w_crime, w_schools, w_acreage, w_SQ_FT, w_flood, w_change):
 
