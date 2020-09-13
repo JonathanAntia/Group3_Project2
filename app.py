@@ -8,7 +8,7 @@ import pandas as pd
 from flask import (Flask, render_template, jsonify, request, redirect)
 from flask_sqlalchemy import SQLAlchemy
 import json
-from user_inputs import default_inputs
+# from user_inputs import default_inputs
 import pull
 import processInputs
 from werkzeug.http import HTTP_STATUS_CODES
@@ -24,7 +24,7 @@ def home():
     return render_template('index.html')
 
 @app.route('/api/jsonData/<budget>/<salesWeight>/<crimeWeight>/<schoolWeight>/<acreageWeight>/<sqftWeight>/<floodWeight>/<valueChangeWeight>')
-def data(budget, salesWeight, crimeWeight, schoolWeight, acreageWeight, sqftWeight, floodWeight, valueChangeWeight):
+def results(budget, salesWeight, crimeWeight, schoolWeight, acreageWeight, sqftWeight, floodWeight, valueChangeWeight):
 
     dictionaryOfUserInput={}
     dictionaryOfUserInput["budget"]=float(budget)
@@ -37,13 +37,28 @@ def data(budget, salesWeight, crimeWeight, schoolWeight, acreageWeight, sqftWeig
     dictionaryOfUserInput["changeValueWeight"]=int(valueChangeWeight)
 
 
-    data = processInputs.scores(dictionaryOfUserInput)
-    return data.to_json()
+    df = processInputs.scores(dictionaryOfUserInput)
+    print(budget, salesWeight, crimeWeight, schoolWeight, acreageWeight, sqftWeight, floodWeight, valueChangeWeight)
+    return df.to_json()
 
 
-# @app.route('/api/results')
+# @app.route('/api/results/<budget>/<salesWeight>/<crimeWeight>/<schoolWeight>/<acreageWeight>/<sqftWeight>/<floodWeight>/<valueChangeWeight>'')
 # def results():
-#     return render_template('results.html')
+#     dictionaryOfUserInput={}
+#     dictionaryOfUserInput["budget"]=float(budget)
+#     dictionaryOfUserInput["salesWeight"]=int(salesWeight)
+#     dictionaryOfUserInput["crimeWeight"]=int(crimeWeight)
+#     dictionaryOfUserInput["schoolWeight"]=int(schoolWeight)
+#     dictionaryOfUserInput["acreageWeight"]=int(acreageWeight)
+#     dictionaryOfUserInput["sqftWeight"]=int(sqftWeight)
+#     dictionaryOfUserInput["floodWeight"]=int(floodWeight)
+#     dictionaryOfUserInput["changeValueWeight"]=int(valueChangeWeight)
+
+
+#     df = processInputs.scores(dictionaryOfUserInput)
+
+#     return df
+#     # render_template('index.html',  tables=[df.to_html(classes='data')], titles=df.columns.values)
 
 # @app.route('/api/jsonData/<budget>')
 # def data(budget):
@@ -59,7 +74,7 @@ def data(budget, salesWeight, crimeWeight, schoolWeight, acreageWeight, sqftWeig
 #     return(
 #         f'Available api routes: <br>'
 #         f'json Data: /api/jsonData/?q/budget/salesWeight/crimeWeight/schoolWeight/acreageWeight/sqftweight/floodWeight/valueChangeWeight<br> '
-#         f'Results:  /api/?q/budget/salesWeight/crimeWeight/schoolWeight/acreageWeight/sqftweight/floodWeight/valueChangeWeight
+#         f'Results:  /api/budget/salesWeight/crimeWeight/schoolWeight/acreageWeight/sqftweight/floodWeight/valueChangeWeight
 #     )
 
 # @app.route("/test", methods=["POST"])
