@@ -10999,3 +10999,8 @@ a[datatoggle="collapse"]{
 .showData{
   visibility:visible;
 }
+
+#map{
+  height: 700px;
+  width: 1100px;
+}
