@@ -9,7 +9,9 @@ let data,
     acreage,
     sqft,
     flood,
-    valuation;
+    valuation,
+    tableData,
+    markers;
 
 ///////////////////////////////////////////////////////////
 // SCRIPT TO HANDLE USER SELECTED CRITERIA FROM HOME PAGE
@@ -33,6 +35,23 @@ window.addEventListener('keyup', function (event){
     }
 });
 
+// add a map showing houston's top 5 neighborhoods
+// Creating map object
+const myMap1 = L.map("map_hou_top_5", {
+    center: [29.76, -95.37],
+    zoom: 11
+});
+
+// Adding tile layer to the map
+L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    tileSize: 100,
+    maxZoom: 13,
+    zoomOffset: -1,
+    id: "mapbox/streets-v11",
+    accessToken: API_KEY
+}).addTo(myMap1)
+
 function handleResultButtonSubmit(){
 
     // change the class of of the #content1 html element to hide data
@@ -55,7 +74,6 @@ function handleResultButtonSubmit(){
     const valuationSlider = document.getElementById('valueWeight');
 
     const w_budget = budgetSlider.value;
-    console.log(w_budget);
     const w_sales = salesSlider.value;
     const w_crime = crimeSlider.value;
     const w_schools = schoolSlider.value;
@@ -75,9 +93,6 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
     d3.json(`/api/jsonData/${w_budget}/${w_sales}/${w_crime}/${w_schools}/${w_acreage}/${w_SQ_FT}/${w_flood}/${w_change}`)
     .then((response)=>{
         data = response;
-        // const data = response;
-        console.log('jsonData:')
-        console.log(data);
 
         /////////////////////////////////////////
         // SUMMARY TABLE
@@ -85,8 +100,6 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
 
         // extract the data needed for the table
         neighborhood = Object.keys(data['latitude']);
-        console.log('Neighborhoods:')
-        console.log(neighborhood);
         sales = Object.values(data['Sales Index']);
         crime = Object.values(data['Crime Index']);
         school = Object.values(data['School Rating Index']);
@@ -98,7 +111,7 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         scores = Object.values(data['Score']);
 
         // create an object with table data
-        const tableData = neighborhood.map((item,i)=>({
+        tableData = neighborhood.map((item,i)=>({
             neighborhood: item, 
             sales: Math.round(sales[i]),
             crime: Math.round(crime[i]),
@@ -107,10 +120,9 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
             sqft: Math.round(sqft[i]),
             flood: Math.round(flood[i]),
             valuation: Math.round(valuation[i]),
-            numResidences: Math.round(residentialCounts[i])
+            numResidences: Math.round(residentialCounts[i]),
+            score: Math.round(scores[i])
         }));
-        console.log('Neighborhood Data:')
-        console.log(tableData);
 
         // use d3 to select the table body
         const tbody = d3.select('#table');
@@ -139,22 +151,22 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         // SUMMARY MAP - TOP 5 NEIGHBORHOODS
         ///////////////////////////////////////////////////
 
-        // add a map showing houston's top 5 neighborhoods
-        // Creating map object
-        const myMap1 = L.map("map_hou_top_5", {
-            center: [29.76, -95.37],
-            zoom: 11
-        });
+        // // add a map showing houston's top 5 neighborhoods
+        // // Creating map object
+        // const myMap1 = L.map("map_hou_top_5", {
+        //     center: [29.76, -95.37],
+        //     zoom: 11
+        // });
         
-        // Adding tile layer to the map
-        L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-            attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-            tileSize: 512,
-            maxZoom: 18,
-            zoomOffset: -1,
-            id: "mapbox/streets-v11",
-            accessToken: API_KEY
-        }).addTo(myMap1)
+        // // Adding tile layer to the map
+        // L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        //     attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+        //     tileSize: 512,
+        //     maxZoom: 18,
+        //     zoomOffset: -1,
+        //     id: "mapbox/streets-v11",
+        //     accessToken: API_KEY
+        // }).addTo(myMap1)
         
         // create an object with info per neighborhood
         const latitudes = Object.values(data['latitude']);
@@ -166,10 +178,13 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
             score: Math.round(scores[i]),
         }));
 
+        // clear existing markers before adding new ones
+        if(!markers == null){markers.clearLayers()};
+
         // loop through the neighborhood object and plot each item on the map
         neighborhoodData.forEach(hood =>{
-            L.marker(hood.location)
-            .bindPopup("<h7>"+hood.neighborhoodName+"</h7><br><h8>Total Score: "+hood.score+"</h8>")
+            markers = L.marker(hood.location);
+            markers.bindPopup("<h7>"+hood.neighborhoodName+"</h7><br><h8>Total Score: "+hood.score+"</h8>")
             .addTo(myMap1)
         })
 
@@ -181,9 +196,8 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         // create a horizontal bar chart with average score per neighborhood
         const coordinates = neighborhoodData.map(item => [item.score, item.neighborhoodName]);
         const sorted = coordinates.sort((a,z)=> a[0]- z[0]);
-        // console.log(coordinates);
-        console.log('horizontalBarChartData:')
-        console.log(sorted);
+        const selectedBudget = document.getElementById('budget').value;
+
         // create a trace object with x as the score and y as the neighborhood name
         const NeighborhoodTrace = {
             type: 'bar',
@@ -193,7 +207,7 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         }
         // define layout
         const layout = {
-            title: "Top 5 Neighborhoods",
+            title: `Top Five Neighborhoods For $${selectedBudget} Budget`,
             yaxis: {
                 automargin: true,
                 rangemode: 'tozero'
@@ -208,6 +222,15 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         /////////////////////////////////////////////
         // INTERACTIVE BAR CHART
         /////////////////////////////////////////////
+        // add neighborhoods to the dropdown menu
+        const dropDownMenu = d3.select('#parameters')
+
+        neighborhood.forEach(hood => {
+            const option = dropDownMenu.append('option');
+            option.text(`${hood}`)
+            option.attr('value',`${hood}`);
+        });
+
         // create a bar chart to show all parameter per neighborhood
         const salesIndexTrace = {
             x: neighborhood,
@@ -323,7 +346,6 @@ function updateInteractiveBarChart(parameter){
     const neighborhoodsArr = neighborhood;
 
     const parameterSelected = parameter;
-    console.log(parameterSelected);
 
     if(parametersArr.includes(parameterSelected)){
     // create a trace object with x as the neighborhood and y as the userSelected parameter
@@ -346,36 +368,37 @@ function updateInteractiveBarChart(parameter){
     }
         Plotly.newPlot('barPlotParameter', [ParameterTrace], parameterLayout);
     }
-    // else if(neighborhoodsArr.includes(parameterSelected)){
-    //     // filter data by neighborhood selected
-    //     const neighborhoodData = data.filter(item => item.Neighborhood == parameterSelected);
+    else if(neighborhoodsArr.includes(parameterSelected)){
+        // filter data by neighborhood selected
+        const neighborhoodData = tableData.filter(item => item.neighborhood == parameterSelected);
 
-    //     const x =  ["SalesIndex","CrimeIndex","SchoolRating","AcreageIndex",
-    //                 "SQFTIndex","FloodIndex","ValueChangeIndex"];
+        const x =  ["Sales","Crime","School Rating","Acreage",
+                    "SQFT","Flood","Value Change"];
 
-    //     const y = [
-    //         neighborhoodData.SalesIndex,
-    //         neighborhoodData.CrimeIndex,
-    //         neighborhoodData.SchoolRating,
-    //         neighborhoodData.AcreageIndex,
-    //         neighborhoodData.SQFTIndex,
-    //         neighborhoodData.FloodIndex,
-    //         neighborhoodData.ValueChangeIndex
-    //     ]
-    //     const neighborhoodTrace = {
-    //         x: x,
-    //         y: y,
-    //         type: 'bar'
-    //     };
+        const y = [
+            neighborhoodData[0]['sales'],
+            neighborhoodData[0]['crime'],
+            neighborhoodData[0]['school'],
+            neighborhoodData[0]['acreage'],
+            neighborhoodData[0]['sqft'],
+            neighborhoodData[0]['flood'],
+            neighborhoodData[0]['valuation']
+        ];
+        const neighborhoodTrace = {
+            x: x,
+            y: y,
+            type: 'bar'
+        };
 
-    //     const neighborhoodLayout = {
-    //         yaxis:{
-    //             title: 'Index'
-    //         }
-    //     };
+        const neighborhoodLayout = {
+            title: `${parameterSelected}`,
+            yaxis:{
+                title: 'Index'
+            }
+        };
 
-    //     Plotly.newPlot('barPlotParameter', [neighborhoodTrace], neighborhoodLayout);
-    // }
+        Plotly.newPlot('barPlotParameter', [neighborhoodTrace], neighborhoodLayout);
+    }
     else {
     // create a bar chart to show all parameter per neighborhood
     const salesIndexTrace2 = {
