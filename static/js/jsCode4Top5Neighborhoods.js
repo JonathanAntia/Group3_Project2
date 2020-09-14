@@ -150,23 +150,6 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         ///////////////////////////////////////////////////
         // SUMMARY MAP - TOP 5 NEIGHBORHOODS
         ///////////////////////////////////////////////////
-
-        // // add a map showing houston's top 5 neighborhoods
-        // // Creating map object
-        // const myMap1 = L.map("map_hou_top_5", {
-        //     center: [29.76, -95.37],
-        //     zoom: 11
-        // });
-        
-        // // Adding tile layer to the map
-        // L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        //     attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-        //     tileSize: 512,
-        //     maxZoom: 18,
-        //     zoomOffset: -1,
-        //     id: "mapbox/streets-v11",
-        //     accessToken: API_KEY
-        // }).addTo(myMap1)
         
         // create an object with info per neighborhood
         const latitudes = Object.values(data['latitude']);
