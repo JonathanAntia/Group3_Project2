@@ -12,6 +12,8 @@ import json
 import pull
 import processInputs
 from werkzeug.http import HTTP_STATUS_CODES
+import plotly
+
 
 
 ####### INITIATE FLASK APP #########################
@@ -42,45 +44,28 @@ def results(budget, salesWeight, crimeWeight, schoolWeight, acreageWeight, sqftW
     return df.to_json()
 
 
-# @app.route('/api/results/<budget>/<salesWeight>/<crimeWeight>/<schoolWeight>/<acreageWeight>/<sqftWeight>/<floodWeight>/<valueChangeWeight>'')
-# def results():
-#     dictionaryOfUserInput={}
-#     dictionaryOfUserInput["budget"]=float(budget)
-#     dictionaryOfUserInput["salesWeight"]=int(salesWeight)
-#     dictionaryOfUserInput["crimeWeight"]=int(crimeWeight)
-#     dictionaryOfUserInput["schoolWeight"]=int(schoolWeight)
-#     dictionaryOfUserInput["acreageWeight"]=int(acreageWeight)
-#     dictionaryOfUserInput["sqftWeight"]=int(sqftWeight)
-#     dictionaryOfUserInput["floodWeight"]=int(floodWeight)
-#     dictionaryOfUserInput["changeValueWeight"]=int(valueChangeWeight)
 
+@app.route('/api/<budget>')
+def data(budget):
 
-#     df = processInputs.scores(dictionaryOfUserInput)
-
-#     return df
-#     # render_template('index.html',  tables=[df.to_html(classes='data')], titles=df.columns.values)
-
-# @app.route('/api/jsonData/<budget>')
-# def data(budget):
-
-#     budget=float(budget)
-#     data = pull.SQL_Pull(budget)
-#     return data.to_json()
+    budget=float(budget)
+    data = pull.SQL_Pull(budget)
+    return data.to_json()
 
 
 
-# @app.route('/apis')
-# def apis():
-#     return(
-#         f'Available api routes: <br>'
-#         f'json Data: /api/jsonData/?q/budget/salesWeight/crimeWeight/schoolWeight/acreageWeight/sqftweight/floodWeight/valueChangeWeight<br> '
-#         f'Results:  /api/budget/salesWeight/crimeWeight/schoolWeight/acreageWeight/sqftweight/floodWeight/valueChangeWeight
-#     )
+@app.route('/apis')
+def apis():
+    return(
+        f'AVAILABLE API ROUTES: <br>'
+        f'_______________________________  <br>'
+        f'<br> ALL FILTERS JSON: /api/jsonData/budget/salesWeight/crimeWeight/schoolWeight/acreageWeight/sqftweight/floodWeight/valueChangeWeight  <br>'
+        f'<br>'
+    
+        f'BUDGET FILTER ONLY JSON:  /api/budget'
+    )
 
-# @app.route("/test", methods=["POST"])
-# def test():
-   
-#     return budget
+
 
 ##########  ERROR HANDLING ##################
 def error_response(status_code, message=None):

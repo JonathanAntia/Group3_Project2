@@ -236,9 +236,18 @@ caption {
   caption-side: bottom;
 }
 
-th {
-  text-align: inherit;
+th,td {
+  text-align: center;
+  padding: 15px;
+  vertical-align: center;
 }
+
+th {
+  background-color: #4CAF50;
+  color: white;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
 
 label {
   display: inline-block;
@@ -10620,9 +10629,6 @@ th {
   transition: all .3s;
 }
 
-@media screen and (max-width:700px){
-.sidebar{width:0}
-}
 
 .sidebar .closebtn {
   position: absolute;
@@ -10662,7 +10668,7 @@ th {
 
 /* Style page content */
 .main-index {
-  margin-right:15%;
+  /* margin-right:2%; */
   margin-left:20%! important;/* Same side and width as the sidebar */
   margin-bottom:15%;
   padding: 10px 20px;
@@ -10671,7 +10677,7 @@ th {
   padding: 10px 10px;
   position:absolute;
   margin-left:10%;
-  margin-right: 10%;
+  /* margin-right: 10%; */
   margin-bottom:15%;
  
 }
@@ -10871,7 +10877,7 @@ a[datatoggle="collapse"]{
   appearance: none;
   width: 95%; /* Full-width */
   height: 10px; /* Specified height */
-  background: linear-gradient(90deg, rgb(214,214,214) 60%); /* Grey background */
+  background: linear-gradient(90deg, rgb(117, 252, 117) 60%); /* Grey background */
   outline: none; /* Remove outline */
   opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
   -webkit-transition: .2s; /* 0.2 seconds transition on hover */
@@ -10998,9 +11004,49 @@ a[datatoggle="collapse"]{
 
 .showData{
   visibility:visible;
+  color: rgb(1, 68, 33)
 }
 
 #map{
-  height: 700px;
-  width: 1100px;
+  height: 40vw;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+
+/* RESULTS TABLE FORMATTING */
+#table {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#table td, #table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#table tr:nth-child(even){background-color: #f2f2f2;}
+
+#table tr:hover {background-color: #ddd;}
+
+#table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+.results{
+  color: rgb(1, 68, 33);
+}
+
+/* FOR LOADING ANIMATION */
+
+.bar_container{
+  width: 50%;
+  margin: 0px auto;
+  margin-top: 20px
 }

@@ -1,6 +1,8 @@
-# import dependency modules
-import pull
+# Dependencies
 import pandas as pd
+from pull import SQL_Pull
+import plotly
+
 
 def scores (dictionaryOfUserInput):
     
@@ -15,7 +17,7 @@ def scores (dictionaryOfUserInput):
     w_change = dictionaryOfUserInput["changeValueWeight"]
 
     # call SQL_Pull function to query the database and create a dataframe
-    df = pull.SQL_Pull(w_budget)
+    df = SQL_Pull(w_budget)
 
     # Normalize data for each parameter
     max=df['sales_neighborhood_2019'].max()
@@ -72,7 +74,7 @@ def scores (dictionaryOfUserInput):
             'total_appraised_value_2019','neighborhood']]
 
     # group parameters by neighborhood name
-    neighborhood_group = parameter_and_score.groupby(['neighborhood'],as_index=False).mean()
+    neighborhood_group = parameter_and_score.groupby(['neighborhood']).mean()
     
     # add count of residences per neighborhood
     residence_count = parameter_and_score.groupby(["neighborhood"]).count()
@@ -122,7 +124,5 @@ def scores (dictionaryOfUserInput):
     # sort scores
     ranked_neighborhoods = neighborhood_group_with_counts.sort_values('Score',ascending=False)
     top5neighborhoods= ranked_neighborhoods.head()
-
-
 
     return top5neighborhoods 
