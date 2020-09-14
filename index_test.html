@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HOU Real Estate Test</title>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin="" />
+
+    <!-- Marker Cluster CSS -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.0.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.0.3/dist/MarkerCluster.Default.css">
+
+    <!-- Our CSS -->
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
+    
+</head>
+<body>
+    <div class="container">
+        <div class="row margin-top-50">
+          <div class="col-md-2">
+            <aside class="filters">
+              <div class="panel panel-default">
+                <div class="panel-heading">Filter Search</div>
+                <div class="panel-body">
+                  <form>
+                    <div class="form-group">
+                      <ul class="list-group" id="filters">
+                        <li class="filter list-group-item">
+                          <label for="date">Enter Filter Criteria</label>
+                          <input class="form-control" id="budget" type="text" placeholder="$1000000">
+                          <input class="form-control" id="salesWeight" type="text" placeholder="0-10">
+                          <input class="form-control" id="crimeWeight" type="text" placeholder="0-10">
+                          <input class="form-control" id="schoolWeight" type="text" placeholder="0-10">
+                          <input class="form-control" id="acreageWeight" type="text" placeholder="0-10">
+                          <input class="form-control" id="sqftWeight" type="text" placeholder="0-10">
+                          <input class="form-control" id="floodWeight" type="text" placeholder="0-10">
+                          <input class="form-control" id="changeValueWeight" type="text" placeholder="0-10">
+                        </li>
+                      </ul>
+                    </div>
+                    <button id="filter-btn" type="button" class="btn btn-default">Filter Table</button>
+                  </form>
+                </div>
+              </div>
+            </aside>
+          </div>
+    <div id='map_hou_top_5', style="width: 705px; height: 400px"></div>
+    <div id="hbarPlotTopScores"></div>
+    <div class="well">
+    <h5>Chart Options:</h5>
+    <label for="parameters">Choose a parameter:</label>
+    <select id="parameters" onchange="handleBarChartSubmit(this.value)">
+    <option value="SalesIndex">Parameters:</option>
+    <option value="SalesIndex">Sales Index</option>
+    <option value="CrimeIndex">Crime Index</option>
+    <option value="SchoolRating">School Rating</option>
+    <option value="AcreageIndex">Acreage Index</option>
+    <option value="SQFTIndex">SQFT Index</option>
+    <option value="FloodIndex">Flood Index</option>
+    <option value="ValueChangeIndex">Value Change Index</option>
+    </select>
+    </div>
+    <div id="barPlotParameter"></div>
+    <!-- <div id="barPlotParameter2"></div> -->
+    <table>
+        <th>Neighborhood</th>
+        <th>Sales Index</th>
+        <th>Crime Index</th>
+        <th>School Rating</th>
+        <th>Acreage Index</th>
+        <th>SQFT Index</th>
+        <th>Flood Index</th>
+        <th>Valuation Index</th>
+        <tbody></tbody>
+    </table>
+
+    <div id='morrisBarChart'></div>
+
+    <!-- Morris JS -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    
+    <!-- Plotly JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+    <!-- d3 JS -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
+    <!-- Marker Cluster JS -->
+    <script type="text/javascript" src="https://unpkg.com/leaflet.markercluster@1.0.3/dist/leaflet.markercluster.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.1/d3.min.js"></script>
+      <!-- API key -->
+    <script type="text/javascript" src="static/js/config.js"></script>
+
+    <script src="static/js/testcode.js"></script>
+</body>
+</html>
