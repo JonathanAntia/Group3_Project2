@@ -290,7 +290,7 @@ function chooseParameter (parameter){
             return sqft;
         case "FloodIndex":
             return flood;
-       default:
+        default:
             return valuation;
     }
 };
@@ -378,56 +378,56 @@ function updateInteractiveBarChart(parameter){
     // }
     else {
     // create a bar chart to show all parameter per neighborhood
-    const salesIndexTrace = {
-        x: neighborhoodsArr,
+    const salesIndexTrace2 = {
+        x: neighborhood,
         y: sales,
         name: 'Sales Index',
         type: 'bar'
     };
-    const crimeIndexTrace = {
-        x: neighborhoodsArr,
+    const crimeIndexTrace2 = {
+        x: neighborhood,
         y: crime,
         name: 'Crime Index',
         type: 'bar'
     };
-    const schoolRatingTrace = {
-        x: neighborhoodsArr,
+    const schoolRatingTrace2 = {
+        x: neighborhood,
         y: school,
         name: 'School Rating',
         type: 'bar'
     };
-    const acreageIndexTrace = {
-        x: neighborhoodsArr,
+    const acreageIndexTrace2 = {
+        x: neighborhood,
         y: acreage,
         name: 'Acreage Index',
         type: 'bar'
     };
-    const sqftIndexTrace = {
-        x: neighborhoodsArr,
+    const sqftIndexTrace2 = {
+        x: neighborhood,
         y: sqft,
         name: 'SQFT Index',
         type: 'bar'
     };
-    const floodIndexTrace = {
-        x: neighborhoodsArr,
+    const floodIndexTrace2 = {
+        x: neighborhood,
         y: flood,
         name: 'Flood Index',
         type: 'bar'
     };
-    const valueChangeIndexTrace = {
-        x: neighborhoodsArr,
+    const valueChangeIndexTrace2 = {
+        x: neighborhood,
         y: valuation,
         name: 'Value Change Index',
         type: 'bar'
     };
 
-    const parametersTrace = [salesIndexTrace, 
-                    crimeIndexTrace, 
-                    schoolRatingTrace,
-                    acreageIndexTrace,
-                    sqftIndexTrace,
-                    floodIndexTrace,
-                    valueChangeIndexTrace,
+    const parametersTrace2 = [salesIndexTrace2, 
+                    crimeIndexTrace2, 
+                    schoolRatingTrace2,
+                    acreageIndexTrace2,
+                    sqftIndexTrace2,
+                    floodIndexTrace2,
+                    valueChangeIndexTrace2,
                 ];
 
     const groupLayout = {
@@ -437,6 +437,6 @@ function updateInteractiveBarChart(parameter){
         }
     };
 
-    Plotly.newPlot('barPlotParameter', parametersTrace, groupLayout);
+    Plotly.newPlot('barPlotParameter', parametersTrace2, groupLayout);
     }
 };
