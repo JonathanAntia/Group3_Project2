@@ -208,12 +208,16 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         /////////////////////////////////////////////
         // INTERACTIVE BAR CHART
         /////////////////////////////////////////////
+        // remove neigborhoods from the dropdown menu before adding new ones
+        d3.selectAll('.hoodMenu').remove();
+
         // add neighborhoods to the dropdown menu
         const dropDownMenu = d3.select('#parameters')
 
         neighborhood.forEach(hood => {
             const option = dropDownMenu.append('option');
-            option.text(`${hood}`)
+            option.text(`${hood}`);
+            option.classed('hoodMenu', true);
             option.attr('value',`${hood}`);
         });
 
@@ -274,6 +278,9 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
             barmode: 'group',
             yaxis:{
                 title: 'Index'
+            },
+            margin:{
+                b: 150
             }
         };
 
@@ -350,6 +357,9 @@ function updateInteractiveBarChart(parameter){
         },
         xaxis: {
             rangemode: 'tozero'
+        },
+        margin:{
+            b: 150
         }
     }
         Plotly.newPlot('barPlotParameter', [ParameterTrace], parameterLayout);
@@ -443,6 +453,9 @@ function updateInteractiveBarChart(parameter){
         barmode: 'group',
         yaxis:{
             title: 'Index'
+        },
+        margin:{
+            b: 150
         }
     };
 
