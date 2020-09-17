@@ -1,4 +1,4 @@
-## Dependencies
+# Dependencies
 import pandas as pd
 import pull
 
@@ -66,7 +66,7 @@ def scores (dictionaryOfUserInput):
                                     w_change*df['Valuation Index'])/total_weights,2)
 
     # look at only the parameters of interest
-    parameter_and_score = df[['latitude','longitude', 'total_appraised_value_2019','pct_value_change',
+    parameter_and_score = df[['latitude','longitude', 'pct_value_change',
         'acreage','sq_ft','Offense_Count','Sales Index','Crime Index','School Rating Index',
         'Acreage Index','SQ_FT Index', 'Flood Risk Index', 'Valuation Index','Score',
         'total_appraised_value_2019','neighborhood']]
