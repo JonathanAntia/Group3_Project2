@@ -14,7 +14,9 @@ let data,
     markers,
     tileLayerMap,
     myMap1,
-    tableInfo;
+    tableInfo,
+    residentialCounts,
+    scores;
 
 ///////////////////////////////////////////////////////////
 // SCRIPT TO HANDLE USER SELECTED CRITERIA FROM HOME PAGE
@@ -91,20 +93,26 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
         valuation = Object.values(data['Valuation Index']).map(item => Math.round(item));
         residentialCounts = Object.values(data['Counts']).map(item => Math.round(item));
         scores = Object.values(data['Score']).map(item => Math.round(item));
+        meanValue = Object.values(data['Mean Value 2019']).map(item => Math.round(item));
+        pctValueChange = Object.values(data['pct_value_change']).map(item => Math.round(item,2));
+        meanSQFT = Object.values(data['sq_ft']).map(item => Math.round(item));
+        meanAcreage = Object.values(data['acreage']).map(item => item.toFixed(2));
+        offenseCounts = Object.values(data['Offense_Count']).map(item => Math.round(item));
 
         // create an object with table data
         tableData = neighborhood.map((item,i)=>({
-            neighborhood: item, 
-            sales: sales[i],
-            crime: crime[i],
-            school: school[i],
-            acreage: acreage[i],
-            sqft: sqft[i],
-            flood: flood[i],
-            valuation: valuation[i],
-            numResidences: residentialCounts[i],
-            score: scores[i]
+            neighborhood: item,
+            num_Residences: residentialCounts[i],
+            avg_value_2019: `$${meanValue[i]}`,
+            pct_value_change: pctValueChange[i],
+            avg_sq_ft: meanSQFT[i],
+            avg_acreage: meanAcreage[i],
+            school_rating: school[i],
+            flood_risk_index: flood[i],
+            crime_offenses: offenseCounts[i],
+            total_score: scores[i]
         }));
+
         // delete the table if it exists
         d3.selectAll('th').remove();
         d3.selectAll('tr').remove();
@@ -275,11 +283,15 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
 
         const groupLayout = {
             barmode: 'group',
+            xaxis: {
+                tickangle: 10
+            },
             yaxis:{
                 title: 'Index'
             },
             margin:{
-                b: 200
+                b: 100,
+                r: 200,
             }
         };
 
@@ -355,17 +367,33 @@ function updateInteractiveBarChart(parameter){
             title: parameterSelected
         },
         xaxis: {
-            rangemode: 'tozero'
+            rangemode: 'tozero',
+            tickangle: 10
         },
         margin:{
-            b: 200
+            b: 100,
+            r: 200
         }
     }
         Plotly.newPlot('barPlotParameter', [ParameterTrace], parameterLayout);
     }
     else if(neighborhoodsArr.includes(parameterSelected)){
+        // create an object with table data
+        const graphData = neighborhood.map((item,i)=>({
+            neighborhood: item, 
+            sales: sales[i],
+            crime: crime[i],
+            school: school[i],
+            acreage: acreage[i],
+            sqft: sqft[i],
+            flood: flood[i],
+            valuation: valuation[i],
+            num_Residences: residentialCounts[i],
+            score: scores[i]
+        }));
+
         // filter data by neighborhood selected
-        const neighborhoodData = tableData.filter(item => item.neighborhood == parameterSelected);
+        const neighborhoodData = graphData.filter(item => item.neighborhood == parameterSelected);
 
         const x =  ["Sales","Crime","School Rating","Acreage",
                     "SQFT","Flood","Value Change"];
@@ -387,6 +415,9 @@ function updateInteractiveBarChart(parameter){
 
         const neighborhoodLayout = {
             title: `${parameterSelected}`,
+            xaxis:{
+                tickangle: 10
+            },
             yaxis:{
                 title: 'Index'
             }
@@ -450,11 +481,15 @@ function updateInteractiveBarChart(parameter){
 
     const groupLayout = {
         barmode: 'group',
+        xaxis: {
+            tickangle: 10
+        },
         yaxis:{
             title: 'Index'
         },
         margin:{
-            b: 200
+            b: 100,
+            r: 200
         }
     };
 
