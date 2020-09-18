@@ -107,7 +107,7 @@ function top5NeighborhoodsContent(w_budget,w_sales,w_crime,w_schools,w_acreage,w
             pct_value_change: pctValueChange[i],
             avg_sq_ft: meanSQFT[i],
             avg_acreage: meanAcreage[i],
-            school_rating: school[i],
+            school_index: school[i],
             flood_risk_index: flood[i],
             crime_offenses: offenseCounts[i],
             total_score: scores[i]
